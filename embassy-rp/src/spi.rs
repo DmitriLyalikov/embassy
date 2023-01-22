@@ -289,13 +289,13 @@ impl<'d, T: Instance> Spi<'d, T, Async> {
         rx_dma: impl Peripheral<P = impl Channel> + 'd,
         config: Config,
     ) -> Self {
-        into_ref!(tx_dma, rx_dma, clk, mosi, miso);
+        into_ref!(tx_dma, rx_dma, clk, mosi, miso, cs);
         Self::new_inner(
             inner,
             Some(clk.map_into()),
             Some(mosi.map_into()),
             Some(miso.map_into()),
-            Some(cs.map_into())
+            Some(cs.map_into()),
             Some(tx_dma.map_into()),
             Some(rx_dma.map_into()),
             config,
