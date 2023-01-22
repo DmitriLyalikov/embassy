@@ -6,7 +6,7 @@ use embassy_hal_common::{into_ref, PeripheralRef};
 pub use embedded_hal_02::spi::{Phase, Polarity};
 
 use crate::reset::Peripherals;
-use crate::reset::reset;
+use crate::reset;
 use crate::dma::{AnyChannel, Channel};
 use crate::gpio::sealed::Pin as _;
 use crate::gpio::{AnyPin, Pin as GpioPin};
