@@ -216,7 +216,7 @@ impl<'d, T: Instance, M: Mode> Spi<'d, T, M> {
             // disable
             p.cr1().write(|w| w.set_sse(false));
 
-            p.cr1().write(|w| w.set_ms(slave));
+            p.cr1().modify(|w| w.set_ms(slave));
         
             // enable
             p.cr1().write(|w| w.set_sse(true));
