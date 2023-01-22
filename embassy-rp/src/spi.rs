@@ -5,6 +5,8 @@ use embassy_futures::join::join;
 use embassy_hal_common::{into_ref, PeripheralRef};
 pub use embedded_hal_02::spi::{Phase, Polarity};
 
+
+use crate::reset::reset;
 use crate::dma::{AnyChannel, Channel};
 use crate::gpio::sealed::Pin as _;
 use crate::gpio::{AnyPin, Pin as GpioPin};
@@ -78,8 +80,12 @@ impl<'d, T: Instance, M: Mode> Spi<'d, T, M> {
         config: Config,
     ) -> Self {
         into_ref!(inner);
-
+        
         unsafe {
+            let mut r = Peripherals(0);
+            r.set_spi1(true);
+            reset::reset(r);
+            reset::unreset_wait(r);
             let p = inner.regs();
             let (presc, postdiv) = calc_prescs(config.frequency);
 
