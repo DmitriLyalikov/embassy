@@ -90,7 +90,7 @@ impl<'d, T: Instance, M: Mode> Spi<'d, T, M> {
                 w.set_sph(config.phase == Phase::CaptureOnSecondTransition);
                 w.set_scr(postdiv);
             });
-            set_slave(config.slave);
+
             p.cr1().write(|w| {
                 w.set_sse(true); // enable
             });
@@ -207,11 +207,13 @@ impl<'d, T: Instance, M: Mode> Spi<'d, T, M> {
     pub fn set_slave(&mut self, slave: bool) {
         let p = self.inner.regs();
         unsafe {
-            if slave {
-                p.sspcr1().modify(|_, w| w.ms().set_bit());
-            } else {
-                p.sspcr1().modify(|_, w| w.ms().clear_bit());
-            }
+            // disable
+            p.cr1().write(|w| w.set_sse(false));
+
+            p.cr1().modify(|w| w.set_ms(slave));
+        
+            // enable
+            p.cr1().write(|w| w.set_sse(true));
         }
     }
 }
