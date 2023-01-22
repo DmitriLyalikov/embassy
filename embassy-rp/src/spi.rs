@@ -22,6 +22,7 @@ pub struct Config {
     pub frequency: u32,
     pub phase: Phase,
     pub polarity: Polarity,
+    pub slave: bool,
 }
 
 impl Default for Config {
@@ -30,6 +31,7 @@ impl Default for Config {
             frequency: 1_000_000,
             phase: Phase::CaptureOnFirstTransition,
             polarity: Polarity::IdleLow,
+            slave: false,
         }
     }
 }
@@ -88,10 +90,11 @@ impl<'d, T: Instance, M: Mode> Spi<'d, T, M> {
                 w.set_sph(config.phase == Phase::CaptureOnSecondTransition);
                 w.set_scr(postdiv);
             });
+            set_slave(config.slave);
             p.cr1().write(|w| {
                 w.set_sse(true); // enable
             });
-
+                
             if let Some(pin) = &clk {
                 pin.io().ctrl().write(|w| w.set_funcsel(1));
             }
@@ -197,6 +200,18 @@ impl<'d, T: Instance, M: Mode> Spi<'d, T, M> {
 
             // enable
             p.cr1().write(|w| w.set_sse(true));
+        }
+    }
+
+    /// Set master/slave
+    pub fn set_slave(&mut self, slave: bool) {
+        let p = self.inner.regs();
+        unsafe {
+            if slave {
+                p.sspcr1().modify(|_, w| w.ms().set_bit());
+            } else {
+                p.sspcr1().modify(|_, w| w.ms().clear_bit());
+            }
         }
     }
 }
