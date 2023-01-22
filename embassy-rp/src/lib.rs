@@ -35,7 +35,7 @@ pub mod usb;
 pub mod clocks;
 pub mod flash;
 pub mod multicore;
-mod reset;
+pub mod reset;
 pub mod watchdog;
 
 // Reexports
