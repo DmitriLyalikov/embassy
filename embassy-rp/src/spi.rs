@@ -626,6 +626,7 @@ impl<'d, T: Instance, M: Mode> SetConfig for Spi<'d, T, M> {
                 w.set_sph(config.phase == Phase::CaptureOnSecondTransition);
                 w.set_scr(postdiv);
             });
+            p.cr1().write(|w| w.set_ms(config.slave));
         }
     }
 }
